@@ -1,7 +1,7 @@
 {
   "name": "frontend_l4_chat_project",
-  "version": "0.0.1",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Chat",
   "main": "dist/index.js",
   "bin": {
     "slack": "dist/bin/slack.js"
@@ -21,9 +21,9 @@
     "type": "git",
     "url": "git@github.com:hexlet-components/projects-frontend-l4-server.git"
   },
-  "author": "Kirill Mokevnin",
+  "author": "Andrei Klimenok",
   "license": "ISC",
-  "homepage": "",
+  "homepage": "https://github.com/Efefefef/frontend-project-lvl4#readme",
   "dependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
