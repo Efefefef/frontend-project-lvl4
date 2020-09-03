@@ -5,20 +5,17 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App.jsx';
-// import { Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import '../assets/application.scss';
-import { Provider } from './context';
-
+import Context from './context';
+import {configureStore} from '@reduxjs/toolkit';
 import faker from 'faker';
-import gon from 'gon';
 import cookies from 'js-cookie';
-// import io from 'socket.io-client';
+import rootReducer from './reducers';
 
 if (process.env.NODE_ENV !== 'production') {
   localStorage.debug = 'chat:*';
 }
-
-console.log('gon', gon);
 
 const isNameSet = cookies.get('name') !== undefined;
 if (!isNameSet) {
@@ -27,12 +24,16 @@ if (!isNameSet) {
 }
 const name = cookies.get('name');
 
-const { channels, messages, currentChannelId } = gon;
-
+const store = configureStore({
+  reducer: rootReducer
+})
 
 ReactDOM.render(
-  <Provider value={ name }>
-    <App channels={channels} messages={messages} currentChannelId={currentChannelId}/>
+  <Provider store={store}>
+    <Context.Provider value={ name }>
+      <App/>
+    </Context.Provider>
   </Provider>,
   document.querySelector('#chat')
+
 );

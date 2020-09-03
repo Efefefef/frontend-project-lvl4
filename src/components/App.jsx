@@ -1,46 +1,41 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import cn from 'classnames';
-import axios from 'axios';
 import routes from '../routes';
-import {Consumer} from '../context';
+import io from 'socket.io-client';
+import Context from '../context';
+import MessageForm from './MessageForm';
+import { addMessage } from '../features/messages/messagesSlice';
 
-export default class App extends React.Component {
-	constructor(props) {
-		super(props);
-		const {currentChannelId} = this.props;
-		this.state = {
-			newMessage: '',
-			currentChannelId
-		}
-		console.log(this.state)
-	}
+const mapStateToProps = state => {
+	const props = {
+		channels: state.channelsInfo.channels,
+		currentChannelId: state.channelsInfo.currentChannelId,
+		messages: state.messages,
+	};
+	return props;
+}
 
-	handleSubmit = (name) => async (e) => {
-		e.preventDefault();
-		try {
-			const response = await axios.post(routes.channelMessagesPath(1), {
-				data: {
-					attributes: {
-						body: this.state.newMessage,
-						channelId: this.state.currentChannelId,
-						nickname: name,
-					}
-				}
-			})
-			console.log(response);
-		} catch (error) {
-			console.error(error);
-		}
-	}
+const mapDispatchToProps = {
+	addMessage,
+}
 
-	handleInputChange = (e) => {
-		this.setState({newMessage: e.target.value});
+class App extends React.Component {
+
+	componentDidMount() {
+		const { addMessage } = this.props;
+		const socket = io(routes.host);
+		socket.on('newMessage', (msg) => {
+			console.log('message: ' + JSON.stringify(msg));
+			const { data: { attributes: { body, channelId, nickname, id } } } = msg;
+			addMessage({ body, channelId, nickname, id })
+		})
 	}
 
 	render() {
-		const {channels, messages} = this.props;
+		const { messages, channels, currentChannelId } = this.props;
 		return (
-			<Consumer>
+			<Context.Consumer>
 				{name => (
 					<div className='row h-100 pb-3'>
 						<div className='col-3 border-right'>
@@ -52,7 +47,7 @@ export default class App extends React.Component {
 								{channels.map(channel => (
 									<li key={channel.name} className='nav-item'>
 										<button type='button' className={cn('nav-link', 'btn', 'btn-block',
-											{'active': this.state.currentChannelId === channel.id}
+											{ 'active': currentChannelId === channel.id }
 										)}>
 											{channel.name}
 										</button>
@@ -63,26 +58,22 @@ export default class App extends React.Component {
 						<div className='col h-100'>
 							<div className='d-flex flex-column h-100'>
 								<div id='message-box' className='chat-messages overflow-auto mb-3'>
-									{messages.map(JSON.stringify).join('\n')},
+									{messages.map(message => (
+										<div key={message.id}>
+											<b>{message.nickname}</b>: {message.body}
+										</div>
+									))}
 								</div>
 								<div className='mt-auto'>
-									<form noValidate onSubmit={this.handleSubmit(name)}>
-										<div className='form-group'>
-											<div className='input-group'>
-												<input name='body' className='form-control' value={this.state.newMessage}
-												       onChange={this.handleInputChange}/>
-												<div className='d-block invalid-feedback'>
-
-												</div>
-											</div>
-										</div>
-									</form>
+									<MessageForm currentChannelId={currentChannelId} name={name}/>
 								</div>
 							</div>
 						</div>
 					</div>
 				)}
-			</Consumer>
+			</Context.Consumer>
 		);
 	}
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
