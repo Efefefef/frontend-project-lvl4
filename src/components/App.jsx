@@ -6,18 +6,20 @@ import io from 'socket.io-client';
 import Context from '../context';
 import MessageForm from './MessageForm';
 import { addMessage } from '../features/messages/messagesSlice';
+import { selectChannel } from '../features/channels/channelsSlice';
 
 const mapStateToProps = state => {
-	const props = {
-		channels: state.channelsInfo.channels,
-		currentChannelId: state.channelsInfo.currentChannelId,
-		messages: state.messages,
-	};
-	return props;
+	const { channelsInfo: { channels, currentChannelId }, messages } = state;
+	return {
+		channels,
+		currentChannelId,
+		messages: messages.filter(message => message.channelId === currentChannelId),
+	}
 }
 
 const mapDispatchToProps = {
 	addMessage,
+	selectChannel,
 }
 
 class App extends React.Component {
@@ -30,6 +32,11 @@ class App extends React.Component {
 			const { data: { attributes: { body, channelId, nickname, id } } } = msg;
 			addMessage({ body, channelId, nickname, id })
 		})
+	}
+
+	handleSelectChannel = (channelId) => () => {
+		const { selectChannel } = this.props;
+		selectChannel({ channelId });
 	}
 
 	render() {
@@ -46,9 +53,13 @@ class App extends React.Component {
 							<ul className='nav flex-column nav-pills nav-fill'>
 								{channels.map(channel => (
 									<li key={channel.name} className='nav-item'>
-										<button type='button' className={cn('nav-link', 'btn', 'btn-block',
-											{ 'active': currentChannelId === channel.id }
-										)}>
+										<button
+											type='button'
+											className={cn('nav-link', 'btn', 'btn-block', {
+												'active': currentChannelId === channel.id
+											})}
+											onClick={this.handleSelectChannel(channel.id)}
+										>
 											{channel.name}
 										</button>
 									</li>

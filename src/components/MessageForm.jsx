@@ -42,13 +42,13 @@ const MessageForm = ({ currentChannelId, name }) => {
 			<div className='form-group'>
 				<div className='input-group'>
 					<input
-						name='body'
 						className={cn('form-control', { 'is-invalid': !formik.isValid })}
 						value={formik.values.newMessage}
 						id='newMessage'
 						name='newMessage'
 						onChange={formik.handleChange}
 						disabled={formik.isSubmitting}
+						autoFocus
 					/>
 					<div className='d-block invalid-feedback'>
 						{formik.errors.newMessage}

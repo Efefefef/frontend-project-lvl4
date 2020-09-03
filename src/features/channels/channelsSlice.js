@@ -8,16 +8,22 @@ const initialState = {
 	currentChannelId
 }
 
+console.log(initialState)
 const channelsSlice = createSlice({
 	name: 'channelsInfo',
 	initialState,
 	reducers: {
 		selectChannel(state, action) {
-			console.log('select')
+			const { channelId } = action.payload;
+			state.currentChannelId = channelId;
 		},
+		addChannel(state, action) {
+			const { name, id } = action.payload;
+			state.channels.push({ name, id });
+		}
 	}
 })
 
-export const { selectChannel } = channelsSlice.actions;
+export const { selectChannel, addChannel } = channelsSlice.actions;
 
 export default channelsSlice.reducer;
