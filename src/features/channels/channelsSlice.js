@@ -8,7 +8,6 @@ const initialState = {
 	currentChannelId
 }
 
-console.log(initialState)
 const channelsSlice = createSlice({
 	name: 'channelsInfo',
 	initialState,
@@ -18,8 +17,9 @@ const channelsSlice = createSlice({
 			state.currentChannelId = channelId;
 		},
 		addChannel(state, action) {
-			const { name, id } = action.payload;
-			state.channels.push({ name, id });
+			console.log('add')
+			const { name, id, removable } = action.payload;
+			state.channels.push({ name, id, removable });
 		}
 	}
 })

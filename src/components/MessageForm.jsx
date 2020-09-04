@@ -49,6 +49,7 @@ const MessageForm = ({ currentChannelId, name }) => {
 						onChange={formik.handleChange}
 						disabled={formik.isSubmitting}
 						autoFocus
+						autoComplete='off'
 					/>
 					<div className='d-block invalid-feedback'>
 						{formik.errors.newMessage}

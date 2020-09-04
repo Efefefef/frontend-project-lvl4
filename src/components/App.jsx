@@ -6,7 +6,10 @@ import io from 'socket.io-client';
 import Context from '../context';
 import MessageForm from './MessageForm';
 import { addMessage } from '../features/messages/messagesSlice';
-import { selectChannel } from '../features/channels/channelsSlice';
+import { selectChannel, addChannel } from '../features/channels/channelsSlice';
+import ChannelAdd from './modals/ChannelAdd';
+// import ChannelRemove from './modals/ChannelRemove';
+// import ChannelRename from './modals/ChannelRename';
 
 const mapStateToProps = state => {
 	const { channelsInfo: { channels, currentChannelId }, messages } = state;
@@ -20,9 +23,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	addMessage,
 	selectChannel,
+	addChannel
 }
 
 class App extends React.Component {
+	state = {
+		modalToShow: null,
+	}
 
 	componentDidMount() {
 		const { addMessage } = this.props;
@@ -39,16 +46,44 @@ class App extends React.Component {
 		selectChannel({ channelId });
 	}
 
+	setModalToShow = (modalName) => {
+		this.setState({ modalToShow: modalName });
+	}
+
+	handleAddChannel = () => {
+		this.setModalToShow('add');
+	}
+
+	closeModal = () => {
+		this.setState({ modalToShow: null });
+	}
+
+	showModal = (modalToShow) => {
+		const { addChannel } = this.props;
+		const modals = {
+			add: <ChannelAdd addChannel={addChannel} closeModal={this.closeModal}/>,
+			// remove: <ChannelRemove closeModal={this.closeModal}/>,
+			// rename: <ChannelRename closeModal={this.closeModal}/>,
+		}
+		console.log(modals[modalToShow])
+		return modals[modalToShow];
+	}
+
 	render() {
 		const { messages, channels, currentChannelId } = this.props;
 		return (
 			<Context.Consumer>
 				{name => (
 					<div className='row h-100 pb-3'>
+						{this.showModal(this.state.modalToShow)}
 						<div className='col-3 border-right'>
 							<div className='d-flex mb-2'>
 								<span>Channels</span>
-								<button className='btn btn-link p-0 ml-auto'>+</button>
+								<button
+									className='btn btn-link p-0 ml-auto'
+									onClick={this.handleAddChannel}
+								>+
+								</button>
 							</div>
 							<ul className='nav flex-column nav-pills nav-fill'>
 								{channels.map(channel => (
