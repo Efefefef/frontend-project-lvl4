@@ -36,6 +36,7 @@
     "axios": "^0.19.2",
     "babel-loader": "^8.1.0",
     "bootstrap": "^4.4.1",
+    "bootstrap-icons": "^1.0.0",
     "classnames": "^2.2.6",
     "core-js": "^3.6.4",
     "css-loader": "^3.4.2",
