@@ -1,16 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Modal } from 'react-bootstrap';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import axios from 'axios';
 import routes from '../../routes';
 import cn from 'classnames';
+import { addChannel } from '../../features/channels/channelsSlice';
+import { hideAddModal } from '../../features/uiState/uiStateSlice';
 
-const ChannelAdd = ({ show, closeModal, addChannel }) => {
+const mapDispatchToProps = {
+	addChannel,
+	hideAddModal,
+}
+
+const ChannelAdd = ({ show, addChannel, hideAddModal }) => {
 	return (
-		<Modal show={true} onHide={closeModal}>
+		<Modal show={show} onHide={hideAddModal}>
 			<Modal.Header>
 				<Modal.Title>Add Channel</Modal.Title>
-				<button className="close" type="button" onClick={closeModal}>
+				<button className="close" type="button" onClick={hideAddModal}>
 					<span aria-hidden="true">×</span>
 					<span className="sr-only">Close</span>
 				</button>
@@ -31,21 +39,33 @@ const ChannelAdd = ({ show, closeModal, addChannel }) => {
 							})
 							const { name, id, removable } = response.data.data.attributes;
 							addChannel({ name, id, removable })
-							closeModal();
+							hideAddModal();
 						} catch (error) {
 							setFieldError('channelName', 'Network error');
 						}
 					}}
-					render={({ isSubmitting, isValid }) => (
+				>
+					{({ isSubmitting, isValid }) => (
 						<Form>
-							<Field
-								name='channelName'
-								// as={<input className={cn({ 'is-invalid': !isValid })}/>}
-								disabled={isSubmitting}
-								autoFocus
-								autoComplete='off'
-							/>
-							<button type='submit'>Submit</button>
+							<div className='row justify-content-center'>
+								<Field
+									name='channelName'
+									className={cn('form-control', 'col-9', {
+										'is-invalid': !isValid,
+									})}
+									disabled={isSubmitting}
+									validate={value => (!!value ? undefined : 'Required')}
+									autoFocus
+									autoComplete='off'
+								/>
+								<button
+									type='submit'
+									className='btn btn-primary ml-2'
+									disabled={isSubmitting}
+								>
+									Submit
+								</button>
+							</div>
 							<ErrorMessage
 								name='channelName'
 								component='div'
@@ -53,10 +73,10 @@ const ChannelAdd = ({ show, closeModal, addChannel }) => {
 							/>
 						</Form>
 					)}
-				/>
+				</Formik>
 			</Modal.Body>
 		</Modal>
 	)
 }
 
-export default ChannelAdd;
+export default connect(null, mapDispatchToProps)(ChannelAdd);

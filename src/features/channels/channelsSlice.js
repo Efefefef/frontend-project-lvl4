@@ -17,13 +17,17 @@ const channelsSlice = createSlice({
 			state.currentChannelId = channelId;
 		},
 		addChannel(state, action) {
-			console.log('add')
 			const { name, id, removable } = action.payload;
 			state.channels.push({ name, id, removable });
+		},
+		renameChannel(state, action) {
+			const { name, id } = action.payload;
+			const renamedChannel = state.channels.find(channel => channel.id === id);
+			renamedChannel.name = name;
 		}
 	}
 })
 
-export const { selectChannel, addChannel } = channelsSlice.actions;
+export const { selectChannel, addChannel, renameChannel } = channelsSlice.actions;
 
 export default channelsSlice.reducer;
