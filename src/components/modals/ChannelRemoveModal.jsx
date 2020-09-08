@@ -7,24 +7,25 @@ import routes from '../../routes';
 import { removeChannel, selectChannel } from '../../features/channels/channelsSlice';
 import { hideModal } from '../../features/uiState/uiStateSlice';
 
-const mapStateToProps = state => {
-	const { uiState: { modalShown }, channelsInfo: { currentChannelId } } = state;
-	return {
-		modalShown,
-		currentChannelId
-	}
-}
+const mapStateToProps = (state) => {
+  const { uiState: { modalShown }, channelsInfo: { currentChannelId } } = state;
+  return {
+    modalShown,
+    currentChannelId,
+  };
+};
 
 const mapDispatchToProps = {
-	removeChannel,
-	hideModal,
-	selectChannel
-}
+  removeChannel,
+  hideModal,
+  selectChannel,
+};
 
 const defaultChannel = 1;
 
-const ChannelRemoveModal = ({ modalShown, removeChannel, hideModal, currentChannelId, selectChannel }) => {
-	return (
+const ChannelRemoveModal = ({
+  modalShown, removeChannel, hideModal, currentChannelId, selectChannel,
+}) => (
 		<Modal show={modalShown === 'remove'} onHide={hideModal}>
 			<Modal.Header>
 				<Modal.Title>Remove Channel</Modal.Title>
@@ -36,17 +37,17 @@ const ChannelRemoveModal = ({ modalShown, removeChannel, hideModal, currentChann
 			<Modal.Body>
 				<Formik
 					initialValues={{
-						submission: '',
+					  submission: '',
 					}}
 					onSubmit={async (values, { setFieldError }) => {
-						try {
-							await axios.delete(routes.channelPath(currentChannelId));
-							removeChannel({ id: currentChannelId })
-							selectChannel({ id: defaultChannel });
-							hideModal();
-						} catch (error) {
-							setFieldError('submission', 'Network error');
-						}
+					  try {
+					    await axios.delete(routes.channelPath(currentChannelId));
+					    removeChannel({ id: currentChannelId });
+					    selectChannel({ id: defaultChannel });
+					    hideModal();
+					  } catch (error) {
+					    setFieldError('submission', 'Network error');
+					  }
 					}}
 				>
 					{({ isSubmitting }) => (
@@ -70,7 +71,6 @@ const ChannelRemoveModal = ({ modalShown, removeChannel, hideModal, currentChann
 				</Formik>
 			</Modal.Body>
 		</Modal>
-	)
-}
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChannelRemoveModal);

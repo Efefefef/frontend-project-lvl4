@@ -4,13 +4,13 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App.jsx';
 import { Provider } from 'react-redux';
 import '../assets/application.scss';
-import Context from './context';
-import {configureStore} from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import faker from 'faker';
 import cookies from 'js-cookie';
+import Context from './context';
+import App from './components/App.jsx';
 import rootReducer from './reducers';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -25,8 +25,8 @@ if (!isNameSet) {
 const name = cookies.get('name');
 
 const store = configureStore({
-  reducer: rootReducer
-})
+  reducer: rootReducer,
+});
 
 ReactDOM.render(
   <Provider store={store}>
@@ -34,6 +34,6 @@ ReactDOM.render(
       <App/>
     </Context.Provider>
   </Provider>,
-  document.querySelector('#chat')
+  document.querySelector('#chat'),
 
 );

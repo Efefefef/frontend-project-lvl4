@@ -4,31 +4,32 @@ import cn from 'classnames';
 import { selectChannel } from '../features/channels/channelsSlice';
 import { showRemoveModal, showRenameModal } from '../features/uiState/uiStateSlice';
 
-const mapStateToProps = state => {
-	const { channelsInfo: { currentChannelId } } = state;
-	return {
-		currentChannelId,
-	}
-}
+const mapStateToProps = (state) => {
+  const { channelsInfo: { currentChannelId } } = state;
+  return {
+    currentChannelId,
+  };
+};
 
 const mapDispatchToProps = {
-	selectChannel,
-	showRenameModal,
-	showRemoveModal,
-}
+  selectChannel,
+  showRenameModal,
+  showRemoveModal,
+};
 
-const Channel = ({ channel, currentChannelId, selectChannel, showRenameModal, showRemoveModal, }) => {
+const Channel = ({
+  channel, currentChannelId, selectChannel, showRenameModal, showRemoveModal,
+}) => {
+  const handleSelectChannel = (id) => () => {
+    selectChannel({ id });
+  };
 
-	const handleSelectChannel = (id) => () => {
-		selectChannel({ id });
-	}
-
-	return (
+  return (
 		<li className='nav-item'>
 			<button
 				type='button'
 				className={cn('nav-link', 'btn', 'btn-block', 'pr-1', {
-					'active': currentChannelId === channel.id
+				  active: currentChannelId === channel.id,
 				})}
 				onClick={handleSelectChannel(channel.id)}
 			>
@@ -60,12 +61,12 @@ const Channel = ({ channel, currentChannelId, selectChannel, showRenameModal, sh
 									</svg>
 								</button>
 							</div>
-						)
-						: null}
+					)
+					  : null}
 				</div>
 			</button>
 		</li>
-	)
-}
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Channel);

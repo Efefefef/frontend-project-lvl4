@@ -1,30 +1,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Modal } from 'react-bootstrap';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import {
+  Formik, Field, Form, ErrorMessage,
+} from 'formik';
 import axios from 'axios';
-import routes from '../../routes';
 import cn from 'classnames';
+import routes from '../../routes';
 import { renameChannel } from '../../features/channels/channelsSlice';
 import { hideModal } from '../../features/uiState/uiStateSlice';
 
-const mapStateToProps = state => {
-	const { uiState: { modalShown }, channelsInfo: { channels, currentChannelId } } = state;
-	const currentChannelName = channels.find(channel => channel.id === currentChannelId).name;
-	return {
-		modalShown,
-		currentChannelId,
-		currentChannelName
-	}
-}
+const mapStateToProps = (state) => {
+  const { uiState: { modalShown }, channelsInfo: { channels, currentChannelId } } = state;
+  const currentChannelName = channels.find((channel) => channel.id === currentChannelId).name;
+  return {
+    modalShown,
+    currentChannelId,
+    currentChannelName,
+  };
+};
 
 const mapDispatchToProps = {
-	renameChannel,
-	hideModal,
-}
+  renameChannel,
+  hideModal,
+};
 
-const ChannelRenameModal = ({ modalShown, renameChannel, hideModal, currentChannelName, currentChannelId }) => {
-	return (
+const ChannelRenameModal = ({
+  modalShown, renameChannel, hideModal, currentChannelName, currentChannelId,
+}) => (
 		<Modal show={modalShown === 'rename'} onHide={hideModal}>
 			<Modal.Header>
 				<Modal.Title>Rename Channel</Modal.Title>
@@ -36,23 +39,23 @@ const ChannelRenameModal = ({ modalShown, renameChannel, hideModal, currentChann
 			<Modal.Body>
 				<Formik
 					initialValues={{
-						channelName: currentChannelName,
+					  channelName: currentChannelName,
 					}}
 					onSubmit={async (values, { setFieldError }) => {
-						try {
-							const response = await axios.patch(routes.channelPath(currentChannelId), {
-								data: {
-									attributes: {
-										name: values.channelName,
-									}
-								}
-							})
-							const { name, id } = response.data.data.attributes;
-							renameChannel({ name, id })
-							hideModal();
-						} catch (error) {
-							setFieldError('channelName', 'Network error');
-						}
+					  try {
+					    const response = await axios.patch(routes.channelPath(currentChannelId), {
+					      data: {
+					        attributes: {
+					          name: values.channelName,
+					        },
+					      },
+					    });
+					    const { name, id } = response.data.data.attributes;
+					    renameChannel({ name, id });
+					    hideModal();
+					  } catch (error) {
+					    setFieldError('channelName', 'Network error');
+					  }
 					}}
 				>
 					{({ isSubmitting, isValid }) => (
@@ -61,10 +64,10 @@ const ChannelRenameModal = ({ modalShown, renameChannel, hideModal, currentChann
 								<Field
 									name='channelName'
 									className={cn('form-control', 'col-9', {
-										'is-invalid': !isValid,
+									  'is-invalid': !isValid,
 									})}
 									disabled={isSubmitting}
-									validate={value => (!!value ? undefined : 'Required')}
+									validate={(value) => (value ? undefined : 'Required')}
 									autoFocus
 									autoComplete='off'
 								/>
@@ -86,7 +89,6 @@ const ChannelRenameModal = ({ modalShown, renameChannel, hideModal, currentChann
 				</Formik>
 			</Modal.Body>
 		</Modal>
-	)
-}
+);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChannelRenameModal);

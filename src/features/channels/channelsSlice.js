@@ -1,37 +1,41 @@
-import {createSlice} from '@reduxjs/toolkit';
+/* eslint-disable no-param-reassign */
+import { createSlice } from '@reduxjs/toolkit';
+// eslint-disable-next-line import/no-unresolved
 import gon from 'gon';
 
 const { channels, currentChannelId } = gon;
 
 const initialState = {
-	channels,
-	currentChannelId
-}
+  channels,
+  currentChannelId,
+};
 
 const channelsSlice = createSlice({
-	name: 'channelsInfo',
-	initialState,
-	reducers: {
-		selectChannel(state, action) {
-			const { id } = action.payload;
-			state.currentChannelId = id;
-		},
-		addChannel(state, action) {
-			const { name, id, removable } = action.payload;
-			state.channels.push({ name, id, removable });
-		},
-		renameChannel(state, action) {
-			const { name, id } = action.payload;
-			const renamedChannel = state.channels.find(channel => channel.id === id);
-			renamedChannel.name = name;
-		},
-		removeChannel(state, action) {
-			const { id } = action.payload;
-			return state.channels.filter(channel => channel.id !== id);
-		}
-	}
-})
+  name: 'channelsInfo',
+  initialState,
+  reducers: {
+    selectChannel(state, action) {
+      const { id } = action.payload;
+      state.currentChannelId = id;
+    },
+    addChannel(state, action) {
+      const { name, id, removable } = action.payload;
+      state.channels.push({ name, id, removable });
+    },
+    renameChannel(state, action) {
+      const { name, id } = action.payload;
+      const renamedChannel = state.channels.find((channel) => channel.id === id);
+      renamedChannel.name = name;
+    },
+    removeChannel(state, action) {
+      const { id } = action.payload;
+      return state.channels.filter((channel) => channel.id !== id);
+    },
+  },
+});
 
-export const { selectChannel, addChannel, renameChannel, removeChannel } = channelsSlice.actions;
+export const {
+  selectChannel, addChannel, renameChannel, removeChannel,
+} = channelsSlice.actions;
 
 export default channelsSlice.reducer;
