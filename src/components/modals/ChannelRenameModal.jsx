@@ -6,20 +6,29 @@ import axios from 'axios';
 import routes from '../../routes';
 import cn from 'classnames';
 import { renameChannel } from '../../features/channels/channelsSlice';
-import { hideRenameModal } from '../../features/uiState/uiStateSlice';
+import { hideModal } from '../../features/uiState/uiStateSlice';
+
+const mapStateToProps = state => {
+	const { uiState: { modalShown }, channelsInfo: { channels, currentChannelId } } = state;
+	const currentChannelName = channels.find(channel => channel.id === currentChannelId).name;
+	return {
+		modalShown,
+		currentChannelId,
+		currentChannelName
+	}
+}
 
 const mapDispatchToProps = {
 	renameChannel,
-	hideRenameModal,
+	hideModal,
 }
 
-const ChannelRename = ({ show, channelId, renameChannel, hideRenameModal }) => {
-	console.log(channelId)
+const ChannelRenameModal = ({ modalShown, renameChannel, hideModal, currentChannelName, currentChannelId }) => {
 	return (
-		<Modal show={show} onHide={hideRenameModal}>
+		<Modal show={modalShown === 'rename'} onHide={hideModal}>
 			<Modal.Header>
 				<Modal.Title>Rename Channel</Modal.Title>
-				<button className="close" type="button" onClick={hideRenameModal}>
+				<button className="close" type="button" onClick={hideModal}>
 					<span aria-hidden="true">×</span>
 					<span className="sr-only">Close</span>
 				</button>
@@ -27,21 +36,20 @@ const ChannelRename = ({ show, channelId, renameChannel, hideRenameModal }) => {
 			<Modal.Body>
 				<Formik
 					initialValues={{
-						channelName: '',
+						channelName: currentChannelName,
 					}}
 					onSubmit={async (values, { setFieldError }) => {
 						try {
-							const response = await axios.patch(routes.channelPath(channelId), {
+							const response = await axios.patch(routes.channelPath(currentChannelId), {
 								data: {
 									attributes: {
 										name: values.channelName,
 									}
 								}
 							})
-							console.log(response)
 							const { name, id } = response.data.data.attributes;
 							renameChannel({ name, id })
-							hideRenameModal();
+							hideModal();
 						} catch (error) {
 							setFieldError('channelName', 'Network error');
 						}
@@ -81,4 +89,4 @@ const ChannelRename = ({ show, channelId, renameChannel, hideRenameModal }) => {
 	)
 }
 
-export default connect(null, mapDispatchToProps)(ChannelRename);
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelRenameModal);

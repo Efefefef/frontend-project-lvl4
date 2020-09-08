@@ -5,20 +5,28 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import axios from 'axios';
 import routes from '../../routes';
 import cn from 'classnames';
-import { addChannel } from '../../features/channels/channelsSlice';
-import { hideAddModal } from '../../features/uiState/uiStateSlice';
+import { addChannel, selectChannel } from '../../features/channels/channelsSlice';
+import { hideModal } from '../../features/uiState/uiStateSlice';
+
+const mapStateToProps = state => {
+	const { uiState: { modalShown } } = state;
+		return {
+			modalShown,
+		}
+	}
 
 const mapDispatchToProps = {
 	addChannel,
-	hideAddModal,
+	hideModal,
+	selectChannel
 }
 
-const ChannelAdd = ({ show, addChannel, hideAddModal }) => {
+const ChannelAddModal = ({ modalShown, addChannel, hideModal, selectChannel }) => {
 	return (
-		<Modal show={show} onHide={hideAddModal}>
+		<Modal show={modalShown === 'add'} onHide={hideModal}>
 			<Modal.Header>
 				<Modal.Title>Add Channel</Modal.Title>
-				<button className="close" type="button" onClick={hideAddModal}>
+				<button className="close" type="button" onClick={hideModal}>
 					<span aria-hidden="true">×</span>
 					<span className="sr-only">Close</span>
 				</button>
@@ -38,8 +46,9 @@ const ChannelAdd = ({ show, addChannel, hideAddModal }) => {
 								}
 							})
 							const { name, id, removable } = response.data.data.attributes;
-							addChannel({ name, id, removable })
-							hideAddModal();
+							addChannel({ name, id, removable });
+							selectChannel({ id });
+							hideModal();
 						} catch (error) {
 							setFieldError('channelName', 'Network error');
 						}
@@ -79,4 +88,4 @@ const ChannelAdd = ({ show, addChannel, hideAddModal }) => {
 	)
 }
 
-export default connect(null, mapDispatchToProps)(ChannelAdd);
+export default connect(mapStateToProps, mapDispatchToProps)(ChannelAddModal);

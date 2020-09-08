@@ -1,60 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-	modals: {
-		add: {
-			isShown: false,
-		},
-		rename: {
-			isShown: false,
-			channelId: null,
-		},
-		remove: {
-			isShown: false,
-			channelId: null,
-		}
-	}
-}
-
 const uiStateSlice = createSlice({
 	name: 'uiState',
-	initialState,
+	initialState: {
+		modalShown: null,
+	},
 	reducers: {
 		showAddModal(state) {
-			state.modals.add.isShown = true;
+			state.modalShown = 'add';
 		},
-		hideAddModal(state) {
-			state.modals.add.isShown = false;
+		showRenameModal(state) {
+			state.modalShown = 'rename';
 		},
-		showRenameModal(state, action) {
-			const { channelId } = action.payload;
-			state.modals.rename = {
-				isShown: true,
-				channelId
-			}
+		showRemoveModal(state) {
+			state.modalShown = 'remove';
 		},
-		hideRenameModal(state) {
-			state.modals.rename = {
-				isShown: false,
-				channelId: null
-			}
-		},
-		showRemoveModal(state, action) {
-			const { channelId } = action;
-			state.modals.remove = {
-				isShown: true,
-				channelId
-			}
-		},
-		hideRemoveModal(state) {
-			state.modals.remove = {
-				isShown: false,
-				channelId: null
-			}
+		hideModal(state) {
+			state.modalShown = null;
 		},
 	}
-})
+});
 
-export const { showAddModal, hideAddModal, showRenameModal, hideRenameModal, showRemoveModal, hideRemoveModal } = uiStateSlice.actions;
+export const { showAddModal, showRenameModal, showRemoveModal, hideModal } = uiStateSlice.actions;
 
 export default uiStateSlice.reducer;
