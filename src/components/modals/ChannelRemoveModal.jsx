@@ -5,6 +5,7 @@ import { Formik, Form, ErrorMessage } from 'formik';
 import axios from 'axios';
 import routes from '../../routes';
 import { removeChannel, selectChannel } from '../../features/channels/channelsSlice';
+import { deleteMessagesForChannel } from '../../features/messages/messagesSlice';
 import { hideModal } from '../../features/uiState/uiStateSlice';
 
 const mapStateToProps = (state) => {
@@ -19,17 +20,18 @@ const mapDispatchToProps = {
   removeChannel,
   hideModal,
   selectChannel,
+  deleteMessagesForChannel,
 };
 
 const defaultChannel = 1;
 
 const ChannelRemoveModal = ({
-  modalShown, removeChannel, hideModal, currentChannelId, selectChannel,
+  modalShown, removeChannel, hideModal, currentChannelId, selectChannel, deleteMessagesForChannel,
 }) => (
-  <Modal show={modalShown === 'remove'} onHide={hideModal}>
+  <Modal show={modalShown === 'remove'} onHide={() => hideModal()}>
     <Modal.Header>
       <Modal.Title>Remove Channel</Modal.Title>
-      <button className="close" type="button" onClick={hideModal}>
+      <button className="close" type="button" onClick={() => hideModal()}>
         <span aria-hidden="true">×</span>
         <span className="sr-only">Close</span>
       </button>
@@ -42,6 +44,7 @@ const ChannelRemoveModal = ({
         onSubmit={async (values, { setFieldError }) => {
           try {
             await axios.delete(routes.channelPath(currentChannelId));
+            deleteMessagesForChannel({ channelId: currentChannelId });
             removeChannel({ id: currentChannelId });
             selectChannel({ id: defaultChannel });
             hideModal();

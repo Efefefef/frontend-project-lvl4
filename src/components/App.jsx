@@ -36,7 +36,7 @@ const modalMapping = {
   remove: <ChannelRemove/>,
 };
 
-const showModal = (modal) => modalMapping[modal];
+const renderModal = (modal) => modalMapping[modal];
 
 
 class App extends React.Component {
@@ -65,13 +65,13 @@ class App extends React.Component {
       <Context.Consumer>
         {(name) => (
           <div className='row h-100 pb-3'>
-            {showModal(modalShown)}
+            {renderModal(modalShown)}
             <div className='col-3 border-right'>
               <div className='d-flex mb-2'>
                 <span>Channels</span>
                 <button
                   className='btn btn-link p-0 ml-auto'
-                  onClick={showAddModal}
+                  onClick={() => showAddModal()}
                 >+
                 </button>
               </div>

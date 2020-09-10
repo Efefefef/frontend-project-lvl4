@@ -34,10 +34,10 @@ const validationSchema = Yup.object().shape({
 const ChannelRenameModal = ({
   modalShown, renameChannel, hideModal, currentChannelName, currentChannelId,
 }) => (
-  <Modal show={modalShown === 'rename'} onHide={hideModal}>
+  <Modal show={modalShown === 'rename'} onHide={() => hideModal()}>
     <Modal.Header>
       <Modal.Title>Rename Channel</Modal.Title>
-      <button className="close" type="button" onClick={hideModal}>
+      <button className="close" type="button" onClick={() => hideModal()}>
         <span aria-hidden="true">×</span>
         <span className="sr-only">Close</span>
       </button>

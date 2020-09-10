@@ -32,10 +32,10 @@ const validationSchema = Yup.object().shape({
 const ChannelAddModal = ({
   modalShown, addChannel, hideModal, selectChannel,
 }) => (
-  <Modal show={modalShown === 'add'} onHide={hideModal}>
+  <Modal show={modalShown === 'add'} onHide={() => hideModal()}>
     <Modal.Header>
       <Modal.Title>Add Channel</Modal.Title>
-      <button className="close" type="button" onClick={hideModal}>
+      <button className="close" type="button" onClick={() => hideModal()}>
         <span aria-hidden="true">×</span>
         <span className="sr-only">Close</span>
       </button>
