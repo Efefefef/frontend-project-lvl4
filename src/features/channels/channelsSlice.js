@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-// eslint-disable-next-line import/no-unresolved
 import gon from 'gon';
 
 const { channels, currentChannelId } = gon;

@@ -44,7 +44,6 @@ class App extends React.Component {
     const { addMessage } = this.props;
     const socket = io(routes.host);
     socket.on('newMessage', (msg) => {
-      console.log(`message: ${JSON.stringify(msg)}`);
       const {
         data: {
           attributes: {
@@ -63,40 +62,40 @@ class App extends React.Component {
       messages, channels, currentChannelId, showAddModal, modalShown,
     } = this.props;
     return (
-			<Context.Consumer>
-				{(name) => (
-					<div className='row h-100 pb-3'>
-						{showModal(modalShown)}
-						<div className='col-3 border-right'>
-							<div className='d-flex mb-2'>
-								<span>Channels</span>
-								<button
-									className='btn btn-link p-0 ml-auto'
-									onClick={showAddModal}
-								>+
-								</button>
-							</div>
-							<ul className='nav flex-column nav-pills nav-fill'>
-								{channels.map((channel) => <Channel channel={channel} key={channel.name}/>)}
-							</ul>
-						</div>
-						<div className='col h-100'>
-							<div className='d-flex flex-column h-100'>
-								<div id='message-box' className='chat-messages overflow-auto mb-3'>
-									{messages.map((message) => (
-										<div key={message.id}>
-											<b>{message.nickname}</b>: {message.body}
-										</div>
-									))}
-								</div>
-								<div className='mt-auto'>
-									<MessageForm currentChannelId={currentChannelId} name={name}/>
-								</div>
-							</div>
-						</div>
-					</div>
-				)}
-			</Context.Consumer>
+      <Context.Consumer>
+        {(name) => (
+          <div className='row h-100 pb-3'>
+            {showModal(modalShown)}
+            <div className='col-3 border-right'>
+              <div className='d-flex mb-2'>
+                <span>Channels</span>
+                <button
+                  className='btn btn-link p-0 ml-auto'
+                  onClick={showAddModal}
+                >+
+                </button>
+              </div>
+              <ul className='nav flex-column nav-pills nav-fill'>
+                {channels.map((channel) => <Channel channel={channel} key={channel.name}/>)}
+              </ul>
+            </div>
+            <div className='col h-100'>
+              <div className='d-flex flex-column h-100'>
+                <div id='message-box' className='chat-messages overflow-auto mb-3'>
+                  {messages.map(({ id, nickname, body }) => (
+                    <div key={id}>
+                      <b>{nickname}</b>: {body}
+                    </div>
+                  ))}
+                </div>
+                <div className='mt-auto'>
+                  <MessageForm currentChannelId={currentChannelId} name={name}/>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Context.Consumer>
     );
   }
 }
