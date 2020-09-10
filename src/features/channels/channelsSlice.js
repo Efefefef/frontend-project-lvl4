@@ -1,17 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import gon from 'gon';
-
-const { channels, currentChannelId } = gon;
-
-const initialState = {
-  channels,
-  currentChannelId,
-};
 
 const channelsSlice = createSlice({
   name: 'channelsInfo',
-  initialState,
+  initialState: null,
   reducers: {
     selectChannel(state, action) {
       const { id } = action.payload;

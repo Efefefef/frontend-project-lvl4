@@ -1,11 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import gon from 'gon';
-
-const { messages } = gon;
 
 const messagesSlice = createSlice({
   name: 'messages',
-  initialState: messages,
+  initialState: null,
   reducers: {
     addMessage(state, action) {
       const {

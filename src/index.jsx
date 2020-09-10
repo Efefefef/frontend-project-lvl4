@@ -1,5 +1,3 @@
-// @ts-check
-
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import React from 'react';
@@ -9,6 +7,7 @@ import '../assets/application.scss';
 import { configureStore } from '@reduxjs/toolkit';
 import faker from 'faker';
 import cookies from 'js-cookie';
+import gon from 'gon';
 import Context from './context';
 import App from './components/App.jsx';
 import rootReducer from './reducers';
@@ -24,8 +23,17 @@ if (!isNameSet) {
 }
 const name = cookies.get('name');
 
+const { channels, currentChannelId, messages } = gon;
+
 const store = configureStore({
   reducer: rootReducer,
+  preloadedState: {
+    channelsInfo: {
+      channels,
+      currentChannelId,
+    },
+    messages,
+  },
 });
 
 ReactDOM.render(
