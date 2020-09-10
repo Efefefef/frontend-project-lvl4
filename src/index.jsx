@@ -43,5 +43,4 @@ ReactDOM.render(
     </Context.Provider>
   </Provider>,
   document.querySelector('#chat'),
-
 );
