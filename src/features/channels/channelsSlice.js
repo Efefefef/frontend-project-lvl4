@@ -28,7 +28,10 @@ const channelsSlice = createSlice({
     },
     removeChannel(state, action) {
       const { id } = action.payload;
-      return state.channels.filter((channel) => channel.id !== id);
+      return {
+        ...state,
+        channels: state.channels.filter((channel) => channel.id !== id),
+      };
     },
   },
 });
