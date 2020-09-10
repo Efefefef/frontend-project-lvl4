@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import cn from 'classnames';
 import axios from 'axios';
 import {
@@ -56,4 +55,4 @@ const MessageForm = ({ currentChannelId, name }) => (
   </Formik>
 );
 
-export default connect(null)(MessageForm);
+export default MessageForm;

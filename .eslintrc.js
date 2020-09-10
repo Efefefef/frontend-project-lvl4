@@ -24,7 +24,7 @@ module.exports = {
   rules: {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
-    'no-shadow': 'off',
+    // 'no-shadow': 'off',
     'no-console': 'off',
     'react/prop-types': 'off'
   }

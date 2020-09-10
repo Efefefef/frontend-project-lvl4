@@ -1,28 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import cn from 'classnames';
 import { selectChannel } from '../features/channels/channelsSlice';
 import { showRemoveModal, showRenameModal } from '../features/uiState/uiStateSlice';
 import Icon from './Icons';
 
-const mapStateToProps = (state) => {
-  const { channelsInfo: { currentChannelId } } = state;
-  return {
-    currentChannelId,
-  };
-};
+const Channel = ({ channel }) => {
+  const currentChannelId = useSelector((state) => state.channelsInfo.currentChannelId);
+  const dispatch = useDispatch();
 
-const mapDispatchToProps = {
-  selectChannel,
-  showRenameModal,
-  showRemoveModal,
-};
-
-const Channel = ({
-  channel, currentChannelId, selectChannel, showRenameModal, showRemoveModal,
-}) => {
   const handleSelectChannel = (id) => () => {
-    selectChannel({ id });
+    dispatch(selectChannel({ id }));
   };
 
   return (
@@ -43,7 +31,7 @@ const Channel = ({
                   style={{
                     backgroundColor: 'transparent',
                   }}
-                  onClick={() => showRenameModal()}
+                  onClick={() => dispatch(showRenameModal())}
                 >
                   <Icon icon='pencil' color='black'/>
                 </button>
@@ -52,7 +40,7 @@ const Channel = ({
                   style={{
                     backgroundColor: 'transparent',
                   }}
-                  onClick={() => showRemoveModal()}
+                  onClick={() => dispatch(showRemoveModal())}
                 >
                   <Icon icon='trash' color='black'/>
                 </button>
@@ -65,4 +53,4 @@ const Channel = ({
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Channel);
+export default Channel;
