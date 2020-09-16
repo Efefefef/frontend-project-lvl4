@@ -34,15 +34,15 @@ const Channel = ({ channel, showModal }) => {
     <li className='nav-item'>
       <button
         type='button'
-        className={cn('nav-link', 'btn', 'btn-block', 'pr-1', {
+        className={cn('nav-link', 'btn', 'btn-block', {
           active: currentChannelId === channel.id,
         })}
         onClick={handleSelectChannel(channel.id)}
       >
-        <div className=''>
-          {channel.name}
+        <div className='row'>
+          <div className='col'>{channel.name}</div>
           {channel.removable && (
-              <div className='d-flex align-items-end'>
+              <div>
                 {renderButton({ modalName: 'rename', showModal, channel })}
                 {renderButton({ modalName: 'remove', showModal, channel })}
               </div>
