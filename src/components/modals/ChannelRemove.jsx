@@ -1,25 +1,21 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Modal } from 'react-bootstrap';
 import { Formik, Form, ErrorMessage } from 'formik';
 import axios from 'axios';
 import routes from '../../routes';
 import { removeChannel, selectChannel } from '../../features/channels/channelsSlice';
-import { deleteMessagesForChannel } from '../../features/messages/messagesSlice';
-import { hideModal } from '../../features/uiState/uiStateSlice';
 
 const defaultChannel = 1;
 
-const ChannelRemoveModal = () => {
-  const modalShown = useSelector((state) => state.uiState.modalShown);
-  const currentChannelId = useSelector((state) => state.channelsInfo.currentChannelId);
+const ChannelRemove = ({ modalInfo, hideModal }) => {
   const dispatch = useDispatch();
 
   return (
-    <Modal show={modalShown === 'remove'} onHide={() => dispatch(hideModal())}>
+    <Modal show={true} onHide={hideModal}>
       <Modal.Header>
         <Modal.Title>Remove Channel</Modal.Title>
-        <button className="close" type="button" onClick={() => dispatch(hideModal())}>
+        <button className="close" type="button" onClick={hideModal}>
           <span aria-hidden="true">×</span>
           <span className="sr-only">Close</span>
         </button>
@@ -31,11 +27,10 @@ const ChannelRemoveModal = () => {
           }}
           onSubmit={async (values, { setFieldError }) => {
             try {
-              await axios.delete(routes.channelPath(currentChannelId));
-              dispatch(deleteMessagesForChannel({ channelId: currentChannelId }));
-              dispatch(removeChannel({ id: currentChannelId }));
+              await axios.delete(routes.channelPath(modalInfo.channel.id));
+              dispatch(removeChannel({ id: modalInfo.channel.id }));
               dispatch(selectChannel({ id: defaultChannel }));
-              dispatch(hideModal());
+              hideModal();
             } catch (error) {
               setFieldError('submission', 'Network error');
             }
@@ -65,4 +60,4 @@ const ChannelRemoveModal = () => {
   );
 };
 
-export default ChannelRemoveModal;
+export default ChannelRemove;

@@ -1,32 +1,33 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { Modal } from 'react-bootstrap';
 import {
   Formik, Field, Form,
 } from 'formik';
-import * as Yup from 'yup';
 import axios from 'axios';
 import cn from 'classnames';
+import * as Yup from 'yup';
 import routes from '../../routes';
-import { renameChannel } from '../../features/channels/channelsSlice';
-import { hideModal } from '../../features/uiState/uiStateSlice';
+import { addChannel, selectChannel } from '../../features/channels/channelsSlice';
 
 const validationSchema = Yup.object().shape({
   channelName: Yup.string()
     .required('Required'),
 });
 
-const ChannelRenameModal = () => {
-  const modalShown = useSelector((state) => state.uiState.modalShown);
-  const { channels, currentChannelId } = useSelector((state) => state.channelsInfo);
-  const currentChannelName = channels.find((channel) => channel.id === currentChannelId).name;
+const ChannelAdd = ({ hideModal }) => {
   const dispatch = useDispatch();
 
+  const inputRef = useRef();
+  useEffect(() => {
+    inputRef.current.select();
+  }, [null]);
+
   return (
-    <Modal show={modalShown === 'rename'} onHide={() => dispatch(hideModal())}>
+    <Modal show={true} onHide={hideModal}>
       <Modal.Header>
-        <Modal.Title>Rename Channel</Modal.Title>
-        <button className="close" type="button" onClick={() => dispatch(hideModal())}>
+        <Modal.Title>Add Channel</Modal.Title>
+        <button className="close" type="button" onClick={hideModal}>
           <span aria-hidden="true">×</span>
           <span className="sr-only">Close</span>
         </button>
@@ -34,21 +35,22 @@ const ChannelRenameModal = () => {
       <Modal.Body>
         <Formik
           initialValues={{
-            channelName: currentChannelName,
+            channelName: '',
           }}
           validationSchema={validationSchema}
           onSubmit={async (values, { setFieldError }) => {
             try {
-              const response = await axios.patch(routes.channelPath(currentChannelId), {
+              const response = await axios.post(routes.channelsPath(), {
                 data: {
                   attributes: {
                     name: values.channelName,
                   },
                 },
               });
-              const { name, id } = response.data.data.attributes;
-              dispatch(renameChannel({ name, id }));
-              dispatch(hideModal());
+              const { name, id, removable } = response.data.data.attributes;
+              dispatch(addChannel({ name, id, removable }));
+              dispatch(selectChannel({ id }));
+              hideModal();
             } catch (error) {
               setFieldError('channelName', 'Network error');
             }
@@ -64,6 +66,7 @@ const ChannelRenameModal = () => {
                   })}
                   disabled={isSubmitting}
                   autoComplete='off'
+                  innerRef={inputRef}
                 />
                 <button
                   type='submit'
@@ -84,4 +87,4 @@ const ChannelRenameModal = () => {
   );
 };
 
-export default ChannelRenameModal;
+export default ChannelAdd;

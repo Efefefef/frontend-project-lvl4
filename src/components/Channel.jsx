@@ -2,10 +2,27 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cn from 'classnames';
 import { selectChannel } from '../features/channels/channelsSlice';
-import { showRemoveModal, showRenameModal } from '../features/uiState/uiStateSlice';
 import Icon from './Icons';
 
-const Channel = ({ channel }) => {
+const renderButton = ({ modalName, showModal, channel }) => {
+  const modalToIconMapping = {
+    rename: 'pencil',
+    remove: 'trash',
+  };
+  return (
+    <button
+      className='btn-outline-secondary border-0'
+      style={{
+        backgroundColor: 'transparent',
+      }}
+      onClick={() => showModal(modalName, channel)}
+    >
+      <Icon icon={modalToIconMapping[modalName]} color='black'/>
+    </button>
+  );
+};
+
+const Channel = ({ channel, showModal }) => {
   const currentChannelId = useSelector((state) => state.channelsInfo.currentChannelId);
   const dispatch = useDispatch();
 
@@ -22,35 +39,19 @@ const Channel = ({ channel }) => {
         })}
         onClick={handleSelectChannel(channel.id)}
       >
-        <div>
+        <div className=''>
           {channel.name}
-          {channel.removable ? (
-              <div className='float-right'>
-                <button
-                  className='btn-outline-secondary border-0 mr-2'
-                  style={{
-                    backgroundColor: 'transparent',
-                  }}
-                  onClick={() => dispatch(showRenameModal())}
-                >
-                  <Icon icon='pencil' color='black'/>
-                </button>
-                <button
-                  className='btn-outline-secondary border-0'
-                  style={{
-                    backgroundColor: 'transparent',
-                  }}
-                  onClick={() => dispatch(showRemoveModal())}
-                >
-                  <Icon icon='trash' color='black'/>
-                </button>
+          {channel.removable && (
+              <div className='d-flex align-items-end'>
+                {renderButton({ modalName: 'rename', showModal, channel })}
+                {renderButton({ modalName: 'remove', showModal, channel })}
               </div>
-          )
-            : null}
+          )}
         </div>
       </button>
     </li>
   );
 };
+
 
 export default Channel;
