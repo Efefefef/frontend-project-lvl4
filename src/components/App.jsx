@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
 import Context from '../context';
 import Channel from './Channel';
 import MessageForm from './MessageForm';
@@ -16,12 +15,9 @@ const renderModal = ({ modalInfo, hideModal }) => {
 
 const App = () => {
   const { channels, currentChannelId } = useSelector((state) => state.channelsInfo);
-  const messages = useSelector((state) => state.messages);
-  const messagesOnCurrentChannelSelector = createSelector(
-    () => messages,
-    (msgs) => msgs.filter((message) => message.channelId === currentChannelId),
-  );
-  const messagesOnCurrentChannel = messagesOnCurrentChannelSelector();
+  const messagesOnCurrentChannel = useSelector((state) => state.messages.filter(
+    (message) => message.channelId === currentChannelId,
+  ));
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
   const hideModal = () => setModalInfo({ type: null, channel: null });
